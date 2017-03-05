@@ -16,6 +16,7 @@
         <customObject id="Qvo-t4-poF" customClass="ProcessTableViewController">
             <connections>
                 <outlet property="_tableView" destination="OSx-09-2o5" id="4xO-wz-hCc"/>
+                <outlet property="_window" destination="QvC-M9-y7g" id="dHs-cp-vy6"/>
             </connections>
         </customObject>
         <customObject id="Voe-Tx-rLC" customClass="AppDelegate">
@@ -206,6 +207,9 @@
                     </scrollView>
                 </subviews>
             </view>
+            <connections>
+                <outlet property="delegate" destination="Qvo-t4-poF" id="ELz-rJ-Tc8"/>
+            </connections>
             <point key="canvasLocation" x="297" y="-53.5"/>
         </window>
     </objects>

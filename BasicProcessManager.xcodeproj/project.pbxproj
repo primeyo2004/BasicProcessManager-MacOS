@@ -316,6 +316,7 @@
 				4B2452C21E68962600F4E78B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

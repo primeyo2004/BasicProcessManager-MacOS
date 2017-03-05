@@ -9,11 +9,14 @@
 #import "ProcessModel.h"
 #include "bsd_process_util.hpp"
 #include <system_error>
+#include <map>
 
 using namespace primes::bsd;
 
+typedef std::shared_ptr<bsd_process_util>     bsd_process_util_ptr;
 
-static bsd_process_util  l_process_mon;
+// Now we can support multiple instance of bsd_process_util
+static std::map<void*,bsd_process_util_ptr>  l_process_mon_map;
 
 
 @implementation ProcessModel
@@ -25,7 +28,11 @@ static bsd_process_util  l_process_mon;
         _processItems = [[NSMutableArray alloc] init];
         _refreshTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(poll) userInfo:nil repeats:YES];
         
+        // thread synchronization
         _task_disp_group = dispatch_group_create();
+        
+        // Creating our own  associated instance of bsd_process_util
+        l_process_mon_map[(__bridge void*)self] = std::make_shared<bsd_process_util>();
         
     }
     
@@ -51,7 +58,7 @@ static bsd_process_util  l_process_mon;
         try{
             
             // no need for GCD since this is just onetime call
-            l_process_mon.reload(static_cast<unsigned>(e_delta_status::DELTA_STAT_ADDED) |
+            l_process_mon_map[(__bridge void*)self]->reload(static_cast<unsigned>(e_delta_status::DELTA_STAT_ADDED) |
                                  static_cast<unsigned>(e_delta_status::DELTA_STAT_REMOVED),*(plstItems.get()));
 
         }
@@ -155,7 +162,7 @@ static bsd_process_util  l_process_mon;
             try{
                 
                 // run from GCD
-                l_process_mon.killprocess(pidToKill);
+                bsd_process_util::killprocess(pidToKill);
             }
             catch (std::system_error& error)
             {
@@ -172,6 +179,8 @@ static bsd_process_util  l_process_mon;
                     
                 });
             }
+            
+            dispatch_group_leave(_task_disp_group);
         });
         
     }
@@ -225,7 +234,13 @@ static bsd_process_util  l_process_mon;
      }
 }
 
-
+-(void)dealloc{
+    NSLog(@"ProcessModel::dealloc");
+    
+    // release the owned object
+    l_process_mon_map[(__bridge void*)self]  =  bsd_process_util_ptr();
+    
+}
 
 
 

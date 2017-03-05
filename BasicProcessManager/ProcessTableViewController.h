@@ -9,11 +9,12 @@
 #import <Cocoa/Cocoa.h>
 #import "ProcessModel.h"
 
-@interface ProcessTableViewController : NSObject<NSTableViewDelegate, NSTableViewDataSource,ProcessModelDelegate> {
+@interface ProcessTableViewController : NSObject<NSWindowDelegate, NSTableViewDelegate, NSTableViewDataSource, ProcessModelDelegate> {
 @private
     // An array of dictionaries that contain the contents to display
     ProcessModel* _processModel;
     IBOutlet NSTableView *_tableView;
+    IBOutlet NSWindow *_window;
 }
 
 - (IBAction)processKill:(id)sender;

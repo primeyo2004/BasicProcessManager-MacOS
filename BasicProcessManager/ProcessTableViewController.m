@@ -7,7 +7,6 @@
 //
 
 #import "ProcessTableViewController.h"
-#import "AppDelegate.h"
 
 @interface ProcessTableViewController ()
 
@@ -29,8 +28,7 @@
             
             [_processModel start];
         }
-        
-        [_tableView reloadData];
+
     }
     
     return self;
@@ -38,7 +36,7 @@
 
 
 - (void)dealloc {
-
+    NSLog(@"ProcessTableViewController::dealloc");
 }
 
 - (IBAction)processKill:(id)sender{
@@ -79,11 +77,9 @@
         if ([identifier isEqualToString:@"idPID"]) {
             cellView = [tableView makeViewWithIdentifier:identifier owner:self];
             cellView.textField.stringValue = [pItem.processID stringValue];
-            return cellView;
         } else if ([identifier isEqualToString:@"idProcessName"]) {
             cellView = [tableView makeViewWithIdentifier:identifier owner:self];
             cellView.textField.stringValue = pItem.processName;
-            return cellView;
         } else if ([identifier isEqualToString:@"idUser"]) {
             cellView = [tableView makeViewWithIdentifier:identifier owner:self];
             cellView.textField.stringValue = pItem.userName;
@@ -105,5 +101,21 @@
     
     [_tableView selectRowIndexes:[NSIndexSet indexSetWithIndex:row] byExtendingSelection:NO];
 }
+
+- (void)windowWillClose:(NSNotification *)notification{
+    NSLog(@"windowWillClose");
+   
+    if (nil != _processModel){
+    
+        // clear the delegates
+        [_processModel setDelegate:nil];
+        
+        [_processModel stop];
+        
+        _processModel = nil;
+    }
+
+}
+
 
 @end

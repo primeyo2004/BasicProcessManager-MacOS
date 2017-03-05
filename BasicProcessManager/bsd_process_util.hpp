@@ -69,7 +69,8 @@ namespace primes{
             virtual void reload(unsigned short filter, process_item_state_list& items);
             virtual void clear();
             
-            virtual void killprocess(pid_t procId);
+            // converted to static, no need for instance
+            static void killprocess(pid_t procId);
             
             
         protected:
